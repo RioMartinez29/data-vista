@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataVista - Ubah Data Jadi Lebih Mudah Dipahami</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Fixed Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-content">
+            <div class="navbar-logo">DataVista</div>
+            <div class="navbar-nav">
+                <a href="#" class="nav-link" onclick="scrollToTop()">Home</a>
+                <a href="#upload-section" class="nav-link">Upload Data</a>
+                <a href="#demo-dashboard" class="nav-link">Live Demo</a>
+                <a href="#how-it-works" class="nav-link">Cara Kerja</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Splash Screen -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-title">DataVista</h1>
+            <p class="splash-subtitle"></p>
+            <p class="splash-tagline">Analisis data otomatis di dalam browser</p>
+            <div class="data-flow-animation">
+                <div class="data-particle"></div>
+                <div class="data-particle"></div>
+                <div class="data-particle"></div>
+                <div class="data-particle"></div>
+                <div class="data-particle"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Background Particles -->
+    <div class="particle-background" id="particle-background"></div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Upload Section (FIRST) -->
+        <section class="upload-section" id="upload-section">
+            <div class="section-header">
+                <h2 class="section-title">Upload Data</h2>
+                <p class="section-description">Drop file CSV di sini untuk memulai analisis</p>
+            </div>
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                </div>
+                <p class="upload-text">Drop file CSV di sini</p>
+                <p class="upload-subtext">atau gunakan data contoh</p>
+                <input type="file" id="file-input" accept=".csv">
+            </div>
+            
+            <!-- Selected File Display -->
+            <div class="selected-file-container" id="selected-file-container" style="display: none;">
+                <div class="selected-file-card">
+                    <div class="file-icon">📄</div>
+                    <div class="file-info">
+                        <p class="file-name" id="selected-file-name">-</p>
+                        <p class="file-size" id="selected-file-size">-</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="upload-buttons">
+                <button class="btn-primary" id="analyze-btn" onclick="analyzeData()">Mulai Analisis</button>
+                <button class="btn-secondary" onclick="loadSampleData()">Gunakan Data Contoh</button>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message" id="error-message" style="display: none;">
+                <p>Silakan pilih file terlebih dahulu</p>
+            </div>
+            
+            <!-- Loading State -->
+            <div class="loading-container" id="loading-container">
+                <div class="loading-spinner"></div>
+                <p class="loading-text" id="loading-text">Membaca data...</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Preview Section -->
+        <section class="features-section">
+            <div class="section-header">
+                <h2 class="section-title">Fitur Unggulan</h2>
+                <p class="section-description">Semua yang Anda butuhkan untuk analisis data</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">Analisis Otomatis</h3>
+                    <p class="feature-description">Deteksi tipe data, cleaning, dan analisis statistik secara otomatis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Grafik Interaktif</h3>
+                    <p class="feature-description">Visualisasi data dengan bar, line, dan pie chart yang animatif</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3 class="feature-title">Insight Data</h3>
+                    <p class="feature-description">Generate insight otomatis berdasarkan pola data Anda</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">Dashboard Modern</h3>
+                    <p class="feature-description">Tampilan SaaS premium dengan animasi halus dan responsif</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Demo Dashboard (AFTER SCROLL) -->
+        <section class="demo-dashboard-section" id="demo-dashboard">
+            <div class="section-header">
+                <h2 class="section-title">Live Demo Dashboard</h2>
+                <p class="section-description">Contoh visualisasi data dengan DataVista</p>
+            </div>
+
+            <!-- Demo Stats -->
+            <div class="stats-grid demo-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <p class="stat-label">Total Baris</p>
+                    <p class="stat-value">1,234</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <p class="stat-label">Total Kolom</p>
+                    <p class="stat-value">8</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✨</div>
+                    <p class="stat-label">Data Valid</p>
+                    <p class="stat-value">98%</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <p class="stat-label">Outliers</p>
+                    <p class="stat-value">12</p>
+                </div>
+            </div>
+
+            <!-- Demo Charts -->
+            <div class="charts-container demo-charts">
+                <div class="chart-card">
+                    <h3 class="chart-title">Penjualan per Kategori</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="demo-bar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3 class="chart-title">Distribusi Produk</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="demo-pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card full-width">
+                    <h3 class="chart-title">Tren Penjualan Bulanan</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="demo-line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Demo Insights -->
+            <div class="insights-grid demo-insights">
+                <div class="insight-card trend-card">
+                    <div class="insight-icon">📈</div>
+                    <h4 class="insight-card-title">Trend</h4>
+                    <p class="insight-card-text">Penjualan menunjukkan tren <span class="highlight">naik 15%</span> bulan ini</p>
+                </div>
+                <div class="insight-card anomaly-card">
+                    <div class="insight-icon">⚠️</div>
+                    <h4 class="insight-card-title">Anomali</h4>
+                    <p class="insight-card-text">Ditemukan <span class="highlight">3 data</span> tidak normal</p>
+                </div>
+                <div class="insight-card category-card">
+                    <div class="insight-icon">🏷️</div>
+                    <h4 class="insight-card-title">Kategori</h4>
+                    <p class="insight-card-text">Kategori terbanyak: <span class="highlight">Elektronik</span></p>
+                </div>
+                <div class="insight-card summary-card">
+                    <div class="insight-icon">📋</div>
+                    <h4 class="insight-card-title">Summary</h4>
+                    <p class="insight-card-text">Total penjualan: <span class="highlight">Rp 45.2M</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cara Kerja Section -->
+        <section class="how-it-works-section" id="how-it-works">
+            <div class="section-header">
+                <h2 class="section-title">Cara Kerja</h2>
+                <p class="section-description">Langkah-langkah analisis data otomatis</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Upload Data</h3>
+                        <p class="step-description">Unggah file CSV atau Excel Anda ke sistem</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Sistem Membaca Data</h3>
+                        <p class="step-description">Data diproses dan diinterpretasi secara otomatis</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Cleaning Data</h3>
+                        <p class="step-description">Data dibersihkan dari nilai yang tidak valid</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Analisis Otomatis</h3>
+                        <p class="step-description">Statistik dan tren dihitung secara real-time</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Grafik Dibuat</h3>
+                        <p class="step-description">Visualisasi data dibuat secara interaktif</p>
+                    </div>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">6</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Insight Ditampilkan</h3>
+                        <p class="step-description">Hasil analisis ditampilkan dalam dashboard</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Section (AFTER UPLOAD) -->
+        <section class="results-section" id="results-section">
+            <div class="results-header">
+                <div class="section-header">
+                    <h2 class="section-title">Hasil Analisis</h2>
+                    <p class="section-description">Grafik dan insight dari data Anda</p>
+                </div>
+                <button class="btn-secondary" onclick="goBack()">Kembali</button>
+            </div>
+            
+            <!-- File Info Card -->
+            <div class="file-info-card" id="results-file-info">
+                <div class="file-icon">📄</div>
+                <div class="file-details">
+                    <p class="file-label">File yang dianalisis:</p>
+                    <p class="file-name" id="results-file-name">-</p>
+                    <p class="file-size" id="results-file-size">-</p>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="stats-grid" id="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <p class="stat-label">Total Baris</p>
+                    <p class="stat-value" id="stat-rows">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <p class="stat-label">Total Kolom</p>
+                    <p class="stat-value" id="stat-cols">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✨</div>
+                    <p class="stat-label">Data Valid</p>
+                    <p class="stat-value" id="stat-clean">0%</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <p class="stat-label">Outliers</p>
+                    <p class="stat-value" id="stat-outliers">0</p>
+                </div>
+            </div>
+
+            <!-- Charts Container -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3 class="chart-title">Distribusi Kategori</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="bar-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3 class="chart-title">Komposisi Data</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="pie-chart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card full-width">
+                    <h3 class="chart-title">Tren Data</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="line-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight Cards -->
+            <div class="insights-grid" id="insights-grid">
+                <div class="insight-card trend-card">
+                    <div class="insight-icon">📈</div>
+                    <h4 class="insight-card-title">Trend</h4>
+                    <p class="insight-card-text" id="trend-insight">-</p>
+                </div>
+                <div class="insight-card anomaly-card">
+                    <div class="insight-icon">⚠️</div>
+                    <h4 class="insight-card-title">Anomali</h4>
+                    <p class="insight-card-text" id="anomaly-insight">-</p>
+                </div>
+                <div class="insight-card category-card">
+                    <div class="insight-icon">🏷️</div>
+                    <h4 class="insight-card-title">Kategori</h4>
+                    <p class="insight-card-text" id="category-insight">-</p>
+                </div>
+                <div class="insight-card summary-card">
+                    <div class="insight-icon">📋</div>
+                    <h4 class="insight-card-title">Summary</h4>
+                    <p class="insight-card-text" id="summary-insight">-</p>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="data-table-section">
+                <div class="table-header">
+                    <h3 class="table-title">Data Preview</h3>
+                    <div class="table-controls">
+                        <select class="filter-select" id="filter-select">
+                            <option value="all">Semua Data</option>
+                            <option value="numeric">Angka</option>
+                            <option value="category">Kategori</option>
+                        </select>
+                        <button class="btn-download" onclick="downloadReport()">Download Report</button>
+                    </div>
+                </div>
+                <div class="table-wrapper">
+                    <table class="data-table" id="data-table">
+                        <thead id="table-head"></thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Download PDF Button -->
+            <div class="reset-section">
+                <button class="btn-secondary" onclick="downloadPDF()">Download Report PDF</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <div class="footer-content">
+            <h3 class="footer-title">DataVista</h3>
+            <p class="footer-subtitle">Ubah data jadi lebih mudah dipahami</p>
+            <p class="footer-credit">Made by <span class="highlight">Rio Martinez</span></p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
